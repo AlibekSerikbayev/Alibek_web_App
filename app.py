@@ -1,33 +1,35 @@
 #venv\Scripts\activate
 #streamlit run ./app.py
 #bu o'zgarish
+import os
 import streamlit as st
 import pathlib
 import plotly.express as px
-from fastai.vision.all import *  # Import fastai
+from fastai.vision.all import *  
 
-# Fix for Windows path issue
-temp = pathlib.PosixPath
-pathlib.PosixPath = pathlib.WindowsPath
+# Windows yo'l muammosini hal qilish
+if os.name == 'nt':  # Agar OS Windows bo'lsa
+    temp = pathlib.PosixPath
+    pathlib.PosixPath = pathlib.WindowsPath
 
-# Add instructions for running the app
+# Ilovani ishga tushirish uchun ko'rsatmalar
 st.set_page_config(page_title="Rasmlar tanish dasturi")
 st.title("Rasmlarni tanish dasturi")
 st.write("Klasslar Car Airplane Boat Carnivore Musical_instrument Sports_equipment Telephone Office_supplies Kitchen_utensil")
 
 # Modelni yuklash (Load the model)
-@st.cache_resource
+@st.cache_data
 def load_model():
     return load_learner("modelalibek.pkl")
 
 try:
     learner = load_model()
 except FileNotFoundError:
-    st.error("Model file 'model.pkl' not found. Please make sure it's in the same directory as this script.")
+    st.error("Model file 'modelalibek.pkl' not found. Please make sure it's in the same directory as this script.")
     st.stop()
 
 # Rasm yuklash (Upload image)
-uploaded_file = st.file_uploader("Rasm yuklang", type=["jpg", "jpeg", "png","jfif","webp"])
+uploaded_file = st.file_uploader("Rasm yuklang", type=["jpg", "jpeg", "png", "jfif", "webp"])
 
 if uploaded_file is not None:
     # Yuklangan rasmni o'qish (Read uploaded image)
@@ -37,7 +39,7 @@ if uploaded_file is not None:
         pred, pred_idx, probs = learner.predict(img)
         
         # Natijani ko'rsatish (Show results)
-        st.image(img, caption='Yuklangan rasm', use_container_width=True)  # Updated parameter
+        st.image(img, caption='Yuklangan rasm', use_container_width=True)
         st.write(f"Bu rasm: {pred} (Ishonch: {probs[pred_idx]:.2f})")
     except Exception as e:
         st.error(f"Rasmni aniqlashda xato: {e}")
@@ -48,4 +50,4 @@ st.sidebar.write("Bizni ijtimoiy tarmoqlarda kuzatib boring:")
 st.sidebar.markdown("[Telegram](https://t.me/ali_bek_003)")
 st.sidebar.markdown("[Instagram](https://www.instagram.com/alib_ek0311/profilecard/?igsh=MWo5azN2MmM2cGs0aw==)")
 st.sidebar.markdown("[Github](https://github.com/AlibekSerikbayev)")
-st.write("Ushbu dastur Alibek Serikbayev tomonidan yaratildi ")
+st.write("Ushbu dastur Alibek Serikbayev tomonidan yaratildi")
