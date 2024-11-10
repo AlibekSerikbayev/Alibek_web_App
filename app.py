@@ -1,12 +1,5 @@
-import os
 import streamlit as st
-import pathlib
 from fastai.vision.all import *  
-
-# Windows yo'l muammosini hal qilish
-if os.name == 'nt':  # Agar OS Windows bo'lsa
-    temp = pathlib.PosixPath
-    pathlib.PosixPath = pathlib.WindowsPath
 
 # Ilovani ishga tushirish uchun ko'rsatmalar
 st.set_page_config(page_title="Rasmlar tanish dasturi")
@@ -17,9 +10,10 @@ st.write("Klasslar avtomobil samolyoti qayiq Yirtqich hayvonlar musiqa asbobi Sp
 @st.cache_data
 def load_model():
     model_path = "modelalibek.pkl"
-    if not os.path.exists(model_path):
+    try:
+        return load_learner(model_path)
+    except FileNotFoundError:
         raise FileNotFoundError(f"Model file '{model_path}' not found. Please make sure it's in the correct directory.")
-    return load_learner(model_path)
 
 try:
     learner = load_model()
