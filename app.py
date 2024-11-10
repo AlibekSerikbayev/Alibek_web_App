@@ -1,10 +1,6 @@
-#venv\Scripts\activate
-#streamlit run ./app.py
-#bu o'zgarish
 import os
 import streamlit as st
 import pathlib
-import plotly.express as px
 from fastai.vision.all import *  
 
 # Windows yo'l muammosini hal qilish
@@ -20,12 +16,15 @@ st.write("Klasslar Car Airplane Boat Carnivore Musical_instrument Sports_equipme
 # Modelni yuklash (Load the model)
 @st.cache_data
 def load_model():
-    return load_learner("modelalibek.pkl")
+    model_path = "modelalibek.pkl"
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(f"Model file '{model_path}' not found. Please make sure it's in the correct directory.")
+    return load_learner(model_path)
 
 try:
     learner = load_model()
-except FileNotFoundError:
-    st.error("Model file 'modelalibek.pkl' not found. Please make sure it's in the same directory as this script.")
+except FileNotFoundError as e:
+    st.error(str(e))
     st.stop()
 
 # Rasm yuklash (Upload image)
