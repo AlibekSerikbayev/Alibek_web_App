@@ -1,7 +1,6 @@
 import streamlit as st
 from fastai.vision.all import *  
 
-# Ilovani ishga tushirish uchun ko'rsatmalar
 st.set_page_config(page_title="Rasmlar tanish dasturi")
 st.title("Rasmlarni tanish dasturi")
 st.write("Klasslar avtomobil samolyoti qayiq Yirtqich hayvonlar musiqa asbobi Sport jihozlari Telefon ofis jihozlari oshxona anjomlari")
