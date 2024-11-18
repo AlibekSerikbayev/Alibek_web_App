@@ -2,7 +2,7 @@ import streamlit as st
 from fastai.vision.all import *
 import plotly.express as px
 import pathlib
-from pathlib import Path
+pathlib.PosixPath = pathlib.Path
 
 # Path muvofiqligini sozlash
 temp = pathlib.PosixPath
@@ -16,32 +16,21 @@ st.write("Klasslar: avtomobil, samolyot, qayiq, yirtqich hayvonlar, musiqa asbob
 # Fayl yuklash
 files = st.file_uploader("Rasm yuklash", type=["png", "jpeg", "jpg"])
 
+# Rasmni joylash
+files = st.file_uploader("Rasm yuklash", type=["avif", "png", "jpeg", "gif", "svg"])
 if files:
-    # Rasmni ko'rsatish
-    st.image(files, caption="Yuklangan rasm")
-    
-    # Rasmni PILImage formatiga o'tkazish
-    img = PILImage.create(files.getvalue())
+    st.image(files)  # rasmni chiqarish
+    # PIL convert
+    img = PILImage.create(files)
     
     # Modelni yuklash
-    try:
-        model_path = Path("modelalibek.pkl")
-        model = load_learner(model_path)
-        
-        # Bashorat qilish
-        pred, pred_id, probs = model.predict(img)
-        st.success(f"Bashorat: {pred}")
-        st.info(f"Ehtimollik: {probs[pred_id] * 100:.1f}%")
-        
-        # Diagramma yaratish
-        fig = px.bar(x=probs * 100, y=model.dls.vocab, orientation='h', title="Bashorat ehtimolligi")
-        st.plotly_chart(fig)
-    except Exception as e:
-        st.error(f"Modelni yuklashda xatolik: {e}")
+    model = load_learner('transport_model.pkl')
 
-# Sidebar
-st.sidebar.header("Qo'shimcha ma'lumotlar")
-st.sidebar.markdown("[Telegram](https://t.me/ali_bek_003)")
-st.sidebar.markdown("[Instagram](https://www.instagram.com/alib_ek0311/profilecard/?igsh=MWo5azN2MmM2cGs0aw==)")
-st.sidebar.markdown("[Github](https://github.com/AlibekSerikbayev)")
-st.write("Ushbu dastur Alibek Serikbayev tomonidan yaratildi")
+    # Bashorat qiymatni topamiz
+    pred, pred_id, probs = model.predict(img)
+    st.success(f"Bashorat: {pred}")
+    st.info(f"Ehtimollik: {probs[pred_id] * 100:.1f}%")
+
+    # Plotting
+    fig = px.bar(x=probs * 100, y=model.dls.vocab)
+    st.plotly_chart(fig)
