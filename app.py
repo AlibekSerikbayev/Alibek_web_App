@@ -2,35 +2,41 @@ import streamlit as st
 from fastai.vision.all import *
 import plotly.express as px
 import pathlib
+
+# Ensure pathlib compatibility
 pathlib.PosixPath = pathlib.Path
 
-# Ilovani ishga tushirish uchun ko'rsatmalar
+# Set up the app
 st.set_page_config(page_title="Rasmlar tanish dasturi")
 st.title("Rasmlarni tanish dasturi")
-st.write("Klasslar avtomobil samolyoti qayiq Yirtqich hayvonlar musiqa asbobi Sport jihozlari Telefon ofis jihozlari oshxona anjomlari")
+st.write("Klasslar: avtomobil, samolyot, qayiq, yirtqich hayvonlar, musiqa asbobi, sport jihozlari, telefon, ofis jihozlari, oshxona anjomlari")
 
-
-# Rasmni joylash
+# File uploader
 files = st.file_uploader("Rasm yuklash", type=["avif", "png", "jpeg", "gif", "svg"])
+
 if files:
-    st.image(files)  # rasmni chiqarish
-    # PIL convert
-    img = PILImage.create(files)
+    # Display image
+    st.image(files)
     
-    # Modelni yuklash
-    model = load_learner('modelalibek.pkl')
+    # Convert file to PILImage
+    img = PILImage.create(files.getvalue())
+    
+    # Load the model
+    model_path = Path("modelalibek.pkl")
+    try:
+        model = load_learner(model_path)
+        # Make prediction
+        pred, pred_id, probs = model.predict(img)
+        st.success(f"Bashorat: {pred}")
+        st.info(f"Ehtimollik: {probs[pred_id] * 100:.1f}%")
+        
+        # Plot probabilities
+        fig = px.bar(x=probs * 100, y=model.dls.vocab, orientation="h", title="Bashorat ehtimolligi")
+        st.plotly_chart(fig)
+    except Exception as e:
+        st.error(f"Modelni yuklashda xatolik: {e}")
 
-    # Bashorat qiymatni topamiz
-    pred, pred_id, probs = model.predict(img)
-    st.success(f"Bashorat: {pred}")
-    st.info(f"Ehtimollik: {probs[pred_id] * 100:.1f}%")
-
-    # Plotting
-    fig = px.bar(x=probs * 100, y=model.dls.vocab)
-    st.plotly_chart(fig)
-
-
-    # Ijtimoiy tarmoq va GitHub sahifalarini ko'rsatish (Display social media and GitHub links)
+# Sidebar
 st.sidebar.header("Qo'shimcha ma'lumotlar")
 st.sidebar.write("Bizni ijtimoiy tarmoqlarda kuzatib boring:")
 st.sidebar.markdown("[Telegram](https://t.me/ali_bek_003)")
