@@ -4,17 +4,8 @@ import plotly.express as px
 import pathlib
 pathlib.PosixPath = pathlib.Path
 
-# Path muvofiqligini sozlash
-temp = pathlib.PosixPath
-pathlib.PosixPath = pathlib.WindowsPath if pathlib.Path().drive else temp
-
-# Sahifa sozlamalari
-st.set_page_config(page_title="Rasmlar tanish dasturi")
-st.title("Rasmlarni tanish dasturi")
-st.write("Klasslar: avtomobil, samolyot, qayiq, yirtqich hayvonlar, musiqa asbobi, sport jihozlari, telefon, ofis jihozlari, oshxona anjomlari")
-
-# Fayl yuklash
-files = st.file_uploader("Rasm yuklash", type=["png", "jpeg", "jpg"])
+# title
+st.title('Transportni klassifikatsiya qiluvchi model')
 
 # Rasmni joylash
 files = st.file_uploader("Rasm yuklash", type=["avif", "png", "jpeg", "gif", "svg"])
