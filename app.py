@@ -18,7 +18,7 @@ if files:
     img = PILImage.create(files)
     
     # Modelni yuklash
-    model = load_learner('transport_model.pkl')
+    model = load_learner('modelalibek.pkl')
 
     # Bashorat qiymatni topamiz
     pred, pred_id, probs = model.predict(img)
